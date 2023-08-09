@@ -1,0 +1,9 @@
+
+//Products
+{
+    "title": "Ford",
+    "description":"Pick Up",
+    "price": 25000,
+    "code": "code1", //repetido cambiar a code 10 para validar
+    "stock": "45"
+}

@@ -1,34 +1,24 @@
 import express from 'express';
-import Product from './productManager/index.js'
+import routerProducts from './routes/products.js'
+import routerCart from './routes/cart.js'
+
 
 const app = express();
 
-//Da de alta mi constructor
-const data = new Product()
-
+app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static('public'));
 
-//Trae todos los productos
-app.get('/products', async (req, res) => {
-    const limit = req.query.limit;
-    const vehicles = await data.getProducts()
+//Use routers
+app.use('/api/products', routerProducts);
+app.use('/api/carts', routerCart);
 
-    if (!limit) {
-        return res.send({vehicles});
-    }
-    //Trae objetos por numero de limite
-    const arrLimit = vehicles.splice(0, limit);
-    res.send({arrLimit});
-});
 
-//Trae vehiculos por Id
-app.get('/products/:idVehicle', async (req, res) => {
-    const idParam = req.params.idVehicle;
-    const filteredById = await data.getProductById(idParam)
-    res.send({filteredById});
-});
 
+
+///---------------------------LISTENING ON PORT----------------------------///////////
 const PORT = 8080;
 app.listen(PORT, () => {
     console.log(`Servidor arriba en el puerto ${PORT}`);
 });
+
