@@ -1,9 +1,11 @@
 
-//Products
-{
-    "title": "Ford",
-    "description":"Pick Up",
-    "price": 25000,
-    "code": "code1", //repetido cambiar a code 10 para validar
-    "stock": "45"
-}
+//POST localhost:8080/api/products
+	{
+		"title": "Toyota rav 4",
+		"description": "en oferta",
+		"price": "42000",
+		"code": "code1", //Repetido, cambiar a code11 para que se pueda agregar
+		"category": "sedan",
+		"thumbnails": null,
+		"stock": 6
+	}
