@@ -85,23 +85,24 @@ export class Product {
         }
    }
     //Actualizacion de producto, busqueda por Code
-    async updateProduct(title, description, price, code, stock, category, thumbnails) {
+    async updateProduct(title, description, price, code, stock, category, thumbnails, id) {
         let product = new Product(title, description, price, code, stock, category, thumbnails)
-        product.id = id
+        const intId = parseInt(id)
+        product.id = intId
         try {
             const products = await this.findProducts()
             //Encuentra ID para mostrar en consola producto eliminado
             productsFiltered = products.find(p => {
-                return p.id === id
+                return p.id === product.id
             })
-
+            console.log(productsFiltered)
             if(productsFiltered) {
                 console.log(`Old:`, productsFiltered)
                 console.log(`Updated:`, product)
                 
                 //Encuentra productos que no tienen mismo id, esos se imprimiran, actualizando el producto
                 let newArr = products.filter(p => {
-                    return p.id !== id
+                    return p.id !== product.id
                 })
                 newArr.push(product)
                 await fs.promises.writeFile(path, JSON.stringify(newArr, null, "\t"))
@@ -156,7 +157,7 @@ export class Product {
             return []
         }  
     }
-    //Encuentra todos los productos
+    //Elimina todos los productos
     async deleteAll() {
         const products = await this.findProducts()
         console.log("Products Deleted:", products)
@@ -310,7 +311,7 @@ export class Cart {
             return []
         }  
     }
-    //Encuentra todos los productos
+    //Elimina todos los productos
     async deleteAll() {
         const carts = await this.findCartProducts()
         console.log("Products Deleted:", carts)

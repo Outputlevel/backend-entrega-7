@@ -5,7 +5,7 @@ const router = Router()
 
 //Da de alta mi constructor
 const data = new Product()
-//data.addProduct("toyota", "toyota", "toyota", "toyota", "toyota", "toyota", "toyota")
+
 
 ///-----------------------------PRODUCTS-----------------------------////
 router.get('/', async (req, res) => {
@@ -74,13 +74,15 @@ router.put('/:idVehicle', async (req, res) => {
            title: req.body.title ?? 'No title',
            description: req.body.description ?? 'No description',
            price: req.body.price ?? "No price",
-           code: req.body.code ?? "No code ", 
-           stock: req.body.stock ?? "No stock",
-           id: idParam
+           code: req.body.code ?? "No code",
+           category: req.body.category ?? "No category",
+           thumbnails: req.body.thumbnails ?? null,
+           stock: req.body.stock ?? "No stock"
         }
 
         const response = await data.updateProduct(
-            productData.title, productData.description, productData.price, productData.code, productData.stock, productData.id
+            productData.title, productData.description, productData.price, 
+            productData.code, productData.stock, productData.category, productData.thumbnails, idParam
             )
             if(response) {
                 return res.status(201).send(response);

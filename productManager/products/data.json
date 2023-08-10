@@ -35,8 +35,8 @@
 	{
 		"title": "Toyota Camry",
 		"description": "en oferta",
-		"price": "49000",
-		"code": "code8",
+		"price": "47000",
+		"code": "code3",
 		"stock": 6,
 		"status": true,
 		"thumbnails": null,
