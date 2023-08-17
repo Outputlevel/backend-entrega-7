@@ -6,6 +6,7 @@ const router = Router()
 //Da de alta mi constructor
 const data = new Product()
 
+let arrProps = {}
 
 ///-----------------------------PRODUCTS-----------------------------////
 router.get('/', async (req, res) => {
@@ -24,6 +25,8 @@ router.get('/', async (req, res) => {
         return []
     }
 });
+
+
 
 //Trae vehiculos por Id
 router.get('/:idVehicle', async (req, res) => {
@@ -107,4 +110,22 @@ router.delete('/:idVehicle', async (req, res) => {
     } 
 });
 
+
+///Realtime Products
+router.get('/realtimeProducts', async (req, res) => {
+    try {
+        const limit = req.query.limit;
+        const vehicles = await data.getProducts()
+
+        if (!limit) {
+            return res.send({vehicles});
+        }
+        //Trae objetos por numero de limite
+        const arrLimit = vehicles.splice(0, limit);
+        res.status(200).send({arrLimit});
+    } catch (err) {
+        console.error(err)
+        return []
+    }
+});
 export default router

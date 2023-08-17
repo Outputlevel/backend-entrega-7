@@ -42,5 +42,16 @@
 		"thumbnails": null,
 		"category": "sedan",
 		"id": 4
+	},
+	{
+		"title": "Ford Mustang",
+		"description": "nuevo vehiculo",
+		"price": "54111",
+		"code": "code74",
+		"stock": "54",
+		"status": true,
+		"thumbnails": null,
+		"category": "coupe",
+		"id": 5
 	}
 ]
