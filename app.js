@@ -5,6 +5,7 @@ import viewsRouter from './routes/views.js';
 import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
 import {Server} from 'socket.io';
+import mongoose from 'mongoose';
 
 export const messages = [];
 export let testPush = [] //Prepara props para handlebars
@@ -20,6 +21,10 @@ app.use(express.static('public'));
 app.use('/api/products', routerProducts);
 app.use('/api/carts', routerCart);
 app.use('/views', viewsRouter);
+
+/////////Mongo DB/////////
+const uri = "mongodb+srv://outputlevel10:KnneXOY0gNm7WAjk@cardealer.mkbx3tp.mongodb.net/carDealer?retryWrites=true&w=majority"
+mongoose.connect(uri)
 
 
 //-------------Handlebars---------------////
@@ -51,7 +56,7 @@ socketServer.on('connection', socket => {
 
     socket.on('message', data => {
         //console.log(data);+
-        socketServer.emit('messageShow', data);
+        socket.broadcast.emit('messageShow', data);
     });
 
     socket.on('addProduct', data => {

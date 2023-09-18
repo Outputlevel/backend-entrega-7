@@ -1,32 +1,66 @@
 import { Router } from "express";
-import { Product } from '../productManager/index.js'
+import { Product } from '../productManager/dao/db/index.js'
+import {Response} from './response.js'
 
 const router = Router()
 
 //Da de alta mi constructor
-const data = new Product()
 
+const data = new Product()
+let response = {}
 let arrProps = {}
+let code = 0
 
 ///-----------------------------PRODUCTS-----------------------------////
+//Gett all products
 router.get('/', async (req, res) => {
     try {
         const limit = req.query.limit;
         const vehicles = await data.getProducts()
+        code = 201
 
         if (!limit) {
-            return res.send({vehicles});
+            response = new Response(code, "success", vehicles )
+            return res.status(code).send(response);
         }
         //Trae objetos por numero de limite
         const arrLimit = vehicles.splice(0, limit);
-        res.status(200).send({arrLimit});
+        response = new Response(code, `success`, arrLimit )
+        return res.status(code).send(response);
     } catch (err) {
         console.error(err)
         return []
     }
 });
 
+//Search products
+router.get('/search', async (req, res) => {
+    try {
+        const itemParams = req.query;
+        delete itemParams.page; delete itemParams.limit;
+        const page = req.query.page || 0;
+        const itemsPerPage = 2
+        const limit = req.query.limit
 
+        console.log(itemParams)
+        if (!itemParams) {
+            throw new Error('Insert filter param');
+        }
+        const vehicles = await data.searchProducts(itemParams)
+        if(vehicles.length >= 1){
+            code = 201
+            response = new Response(code, "Product Found", vehicles )
+            return res.status(code).send(response);
+        }
+        return res.status(403).send("Producto No Encontrado");
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send({
+            status: 'error',
+            message: error.message
+        });
+    }
+});
 
 //Trae vehiculos por Id
 router.get('/:idVehicle', async (req, res) => {
@@ -34,7 +68,9 @@ router.get('/:idVehicle', async (req, res) => {
         const idParam = req.params.idVehicle;
         const filteredById = await data.getProductById(idParam)
         if(filteredById){
-            return res.status(201).send({filteredById});
+            code = 201
+            response = new Response(code, "Product Found", filteredById )
+            return res.status(code).send(response);
         }
         return res.status(403).send("Producto No Encontrado");
     } catch (err) {
@@ -53,13 +89,17 @@ router.post('/', async (req, res) => {
            code: req.body.code ?? "No code",
            category: req.body.category ?? "No category",
            thumbnails: req.body.thumbnails ?? null,
-           stock: req.body.stock ?? "No stock"
+           stock: req.body.stock ?? "No stock",
+           carts: []
         }
-        const response = await data.addProduct(
-            productData.title, productData.description, productData.price, 
-            productData.code, productData.stock, productData.category, productData.thumbnails
-            )
-        return res.status(201).send(response);
+        const createProduct = await data.addProduct(productData)
+        console.log(createProduct)
+        if(createProduct){
+            code = 201
+            response = new Response(code, "Product added", createProduct )
+            return res.status(code).send(response);
+        }
+        return res.status(403).send("Producto No Creado, prueba con otro codigo");
     } catch (err) {
         console.error(err)
         return []
@@ -83,12 +123,11 @@ router.put('/:idVehicle', async (req, res) => {
            stock: req.body.stock ?? "No stock"
         }
 
-        const response = await data.updateProduct(
-            productData.title, productData.description, productData.price, 
-            productData.code, productData.stock, productData.category, productData.thumbnails, idParam
-            )
-            if(response) {
-                return res.status(201).send(response);
+        const updatedProduct = await data.updateProduct(productData)
+            if(updatedProduct) {
+                code = 201
+                response = new Response(code, "success", updatedProduct )
+                return res.status(code).send(response);
             }
             return res.status(404).send("Producto NO Encontrado");
     } catch (err) {
@@ -102,8 +141,10 @@ router.put('/:idVehicle', async (req, res) => {
 router.delete('/:idVehicle', async (req, res) => {
     try{
         const idParam = req.params.idVehicle;
-        const message = await data.deleteProductById(idParam)
-        res.status(201).send(message);
+        const deleteProduct = await data.deleteProductById(idParam)
+        code = 201
+        response = new Response(code, "Product Deleted", deleteProduct )
+        return res.status(code).send(response);
     } catch (err) {
         console.error(err)
         return []
@@ -116,13 +157,15 @@ router.get('/realtimeProducts', async (req, res) => {
     try {
         const limit = req.query.limit;
         const vehicles = await data.getProducts()
-
+        code = 200
         if (!limit) {
-            return res.send({vehicles});
+            response = new Response(code, "Products Found", vehicles )
+            return res.status(code).send(response);
         }
         //Trae objetos por numero de limite
         const arrLimit = vehicles.splice(0, limit);
-        res.status(200).send({arrLimit});
+        response = new Response(code, "Products Found", arrLimit )
+        return res.status(code).send(response);
     } catch (err) {
         console.error(err)
         return []

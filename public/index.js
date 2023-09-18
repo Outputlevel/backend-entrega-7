@@ -6,6 +6,21 @@ const descriptionInput = document.querySelector("#description-input");
 const categoryInput = document.querySelector("#category-input");
 const codeInput = document.querySelector("#code-input");
 const stockInput = document.querySelector("#stock-input");
+const newMsg = document.querySelector("#new-msg");
+
+socket.on('messageShow', data =>{
+    ///agregar los divs por js de msg recivido
+})
+
+function newMessage(){
+    //agregar divs de mensaje enviado
+    socket.emit('message', newMsg.value);
+}
+
+function addToCart(vehicles){
+    alert(vehicles)
+
+}
 
 
 function send() {

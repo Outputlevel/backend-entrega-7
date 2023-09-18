@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Product } from '../productManager/index.js'
+import { Product } from '../productManager/dao/db/index.js'
 //import { messages } from "../app.js";
 import { testPush } from "../app.js";
 import { vehicleId } from "../app.js";
@@ -10,11 +10,12 @@ const data = new Product() //Da de alta mi constructor
 
 let arrProps = null
 
-
+//get all products
 router.get('/', async (req, res) => {
     try {
         const limit = req.query.limit;
         const vehicles = await data.getProducts()
+        
         arrProps = {
             title: "Vechicles",
             style: "style.css",
@@ -34,6 +35,34 @@ router.get('/', async (req, res) => {
         return []
     }
 });
+
+//single product by id
+router.get('/:idVehicle', async (req, res) => {
+    try {
+        const idParam = req.params.idVehicle;
+        const limit = req.query.limit;
+        const vehicles = await data.getProductById(idParam)
+        console.log(idParam)
+        arrProps = {
+            title: "Vechicles",
+            style: "style.css",
+            vehicles: vehicles
+        }
+
+        if (!limit) {
+            console.log(vehicles)
+            return res.render('single', arrProps)
+        }
+        //Trae objetos por numero de limite
+        const arrLimit = vehicles.splice(0, limit);
+        res.status(200).render('single', vehicles).send({arrLimit});
+        
+    } catch (err) {
+        console.error(err)
+        return []
+    }
+});
+
 
 router.get('/realtimeproducts', async (req, res) => {
     try {
@@ -92,5 +121,21 @@ router.get('/realtimeproducts', async (req, res) => {
     }
 });
 
+router.get('/chat', async (req, res) => {
+    try {
+        //const limit = req.query.limit;
+        const vehicles = await data.getProducts()
+        arrProps = {
+            title: "Chat",
+            style: "style.css",
+            vehicles: vehicles
+        }
+        console.log(vehicles)
+        return res.render('chat', arrProps)        
+    } catch (err) {
+        console.error(err)
+        return []
+    }
+});
 
 export default router;

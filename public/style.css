@@ -96,4 +96,10 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     color: rgba(17, 24, 39, 1);
+    cursor: pointer;
+  }
+  .flex-col-xs{
+    display: flex;
+    flex-direction: column;
+    gap: .725rem;
   }
