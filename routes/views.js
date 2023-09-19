@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Product } from '../productManager/dao/db/index.js'
+import { Product, Cart } from '../productManager/dao/db/index.js'
 //import { messages } from "../app.js";
 import { testPush } from "../app.js";
 import { vehicleId } from "../app.js";
@@ -7,12 +7,17 @@ import { vehicleId } from "../app.js";
 const router = Router();
 
 const data = new Product() //Da de alta mi constructor
+const carts = new Cart()
 
 let arrProps = null
 
 //get all products
 router.get('/', async (req, res) => {
     try {
+        if(typeof(vehicleId) === 'object'){
+            console.log("existe")
+            return
+        }
         const limit = req.query.limit;
         const vehicles = await data.getProducts()
         
@@ -132,6 +137,26 @@ router.get('/chat', async (req, res) => {
         }
         console.log(vehicles)
         return res.render('chat', arrProps)        
+    } catch (err) {
+        console.error(err)
+        return []
+    }
+});
+
+router.get('/carts/:cid', async (req, res) => {
+    try {
+        const cartId = req.params.cid;
+        const cart = await carts.getCartById(cartId)
+        /* let allProducts = await data.getProducts()
+        let products = allProducts.find(p=>p.carts.cart == "6502b876d911b1e21f0b42bb") */
+        arrProps = {
+            title: "cart",
+            style: "style.css",
+            cart: cart,
+            products: cart.products 
+        }
+        console.log("ggg", cart)
+        return res.render('cart', arrProps)
     } catch (err) {
         console.error(err)
         return []

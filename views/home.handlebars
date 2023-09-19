@@ -1,11 +1,11 @@
 <h2>Inventario Actual</h2> 
 <script>
-    let hi = "hello"
-    console.log(hi)
-
+    let cart = "6502b876d911b1e21f0b42bb"
 </script>
 <section>
+    <a class="action" href="http://localhost:8080/views/carts/6502b876d911b1e21f0b42bb">Go to Cart</a>
     <div class="container">
+        
         {{#each vehicles}}
             <div class="card">
                 <div class="header">
@@ -34,14 +34,16 @@
                     </li>
                 </ul>
                 <div class="flex-col-xs">
-                    <div class="test">{{this.title}}</div>
+                    <div class="test">{{this._id}}</div>
 
                     <a class="action" href="http://localhost:8080/views/{{this._id}}">Learn More</a>
-                    <button type="button" onclick='addToCart(hi)' class="action">Add to cart</button>
+                    <button type="button" onclick='itemToCart("{{{this._id}}}")' class="action">Add to cart</button>
                 </div>
                 
             </div>
         {{/each}}
     </div>
 </section>
+<script src="/socket.io/socket.io.js"></script>
 <script src="/index.js"></script>
+

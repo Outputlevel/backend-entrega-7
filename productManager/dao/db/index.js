@@ -15,7 +15,7 @@ export class Product {
     //Constructor eliminado 
     async findProducts() {
             try {
-                const getArr = await vehiclesModel.find().populate('carts.cart').lean()
+                const getArr = await vehiclesModel.find().lean() //elimitated populate for easier queries .populate('carts.cart')
                 return getArr; //Parse objects
             } catch (error) {
                 console.error(error);
@@ -81,12 +81,10 @@ export class Product {
         try {
             if(typeof(id) === 'object'){
                 product.carts.push(id)
-                //console.log("heeelp///////////")
                 let productArr = await vehiclesModel.updateOne({_id:product._id}, product)
                 console.log("testt", productArr)
                 return productArr
-            }
-            console.log("heeelp///////////")
+            }      
             let productArr = await this.getProductById(id)        
             if(!productArr){
             console.log(`Producto NO encontrado by ID: ${id}`)
@@ -181,7 +179,7 @@ export class Cart {
     //To distribute current objects to class methods *will NOT print in console*. Will also parse JSON  
     async findCartProducts() {
         try {
-            const getArr = await cartsModel.find()
+            const getArr = await cartsModel.find().lean()
             return getArr
         } catch (error) {
             console.error(error);
@@ -226,30 +224,59 @@ export class Cart {
             }
             //Empuja id de carrito a Producto para referenciar.
             let cartInProduct = productArr.carts.find(item => item.cart == getCart.id) //busca y valida si id de carrito ya existe en carts:[]
-            console.log("helooos",cartInProduct)
-                if(!cartInProduct){
-                    console.log("helooo",cartInProduct)
+
+            if(!cartInProduct){
+                    console.log("No product found in current cart, adding")
                     await this.productClass.updateProduct({cart: getCart.id}, productArr) //no hay return para que siga corriendo la funcion
                 }
-            const cartQty = getCart.products.find( e => e.productId == productArr.id)
+            const cartQty = getCart.products.find( e => e.productId == productArr._id)
             if(!cartQty){
-                getCart.products.push({productId: productArr.id, quantity: 1})
+                getCart.products.push({productId: productArr._id, quantity: 1})
                 let newProduct = await cartsModel.updateOne({_id:cartId}, getCart)
                 //getCart.products.push({productId: productArr.id, quantity: 1})
                 console.log(`Nuevo producto agregado a carrito. ID: ${getCart.id}`)
                 return newProduct
             }
-            const newArr = getCart.products.filter( e => e.productId != productArr.id)            
+            const newArr = getCart.products.filter( e => e.productId != productArr._id) 
+          
             //Empuja el array con producto agregado al carrito
             newArr.push({productId: cartQty.productId, quantity: cartQty.quantity + 1, _id: cartQty.id })           
             getCart.products = newArr
-            let newProduct = await cartsModel.updateOne({_id:getCart.id}, getCart)
+            let newProduct = await cartsModel.updateOne({_id:getCart._id}, getCart)
             console.log(`Carrito actualizado. ID: ${getCart}`)
             return newProduct
         } catch (err) {
             console.error(err)
             return []
         } 
+   }
+   //actualiza carrito
+   async updateCart(cid, pid, quantity){
+    const getCart =  await this.getCartById(cid)
+    const productArr = await this.productClass.getProductById(pid)
+    //Removes product from cart
+    if(quantity){
+        quantity.toString()
+        let cartFiltered = getCart.products.filter(p=>p.productId !== pid)
+        Number(quantity)
+        let arrUpdate = {productId: productArr._id, quantity:quantity}
+        cartFiltered.push(arrUpdate)
+        getCart.products=cartFiltered
+        let cartUpdated = await cartsModel.updateOne({_id:getCart._id}, getCart)
+        console.log("see",getCart)
+        return cartUpdated
+    }
+    let cartFiltered = getCart.products.filter(p=>p.productId !== pid)
+    getCart.products = cartFiltered
+    let cartUpdated = await cartsModel.updateOne({_id:getCart._id}, getCart)
+    //Removes Cart from Product
+    let productsFiltered = productArr.carts.filter(p=>p.cart != cid)
+    console.log("hi",productsFiltered)
+    productArr.carts = productsFiltered
+    await vehiclesModel.updateOne({_id:productArr._id}, productArr)
+
+    return cartFiltered
+
    }
 
     //Encuentra producto por ID
@@ -258,7 +285,7 @@ export class Cart {
         try {
             let cart = await this.findCartProducts()
             cartsFiltered = cart.find(p => {
-                return p.id == id
+                return p._id == id
             })
             if(!cartsFiltered){
                 message="carrito no encontrado"

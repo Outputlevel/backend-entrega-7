@@ -6,10 +6,11 @@ import handlebars from 'express-handlebars';
 import __dirname from './utils.js';
 import {Server} from 'socket.io';
 import mongoose from 'mongoose';
+import { Cart } from "./productManager/dao/db/index.js";
 
 export const messages = [];
 export let testPush = [] //Prepara props para handlebars
-export let vehicleId = 0
+export let vehicleId 
 
 const app = express();
 
@@ -60,19 +61,18 @@ socketServer.on('connection', socket => {
     });
 
     socket.on('addProduct', data => {
-        console.log("dataa", data);
-        testPush = data
-/*         testPush.push({
-            //socketId: socket.id,
-            //message: data,
-            vehicles: data
-        }); */
-        socketServer.emit('addProduct', testPush);
+        let cartId = '6502b876d911b1e21f0b42bb'
+        let cart = new Cart()
+        cart.addToCart(cartId, data)
+        vehicleId = data
+        console.log("dataa", vehicleId)
+        console.log("item added")
+        socketServer.emit('productRefresh', {vehicleId});
     });
 
     socket.on('deleteVehicle', data => {
         vehicleId = data
         console.log(vehicleId)
-        socketServer.emit('deleteVehicle', vehicleId);
+        socketServer.emit('deletedVehicle', {vehicleId});
     });
 });

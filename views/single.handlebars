@@ -28,9 +28,12 @@
                     </li>
                 </ul>
                 <div class="flex-col-xs">
-                    <button type="button" class="action">Add to cart</button>
+                    <button type="button" onclick='itemToCart("{{{vehicles._id}}}")' class="action">Add to cart</button>
                 </div>
                 
             </div>
     </div>
 </section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/index.js"></script>

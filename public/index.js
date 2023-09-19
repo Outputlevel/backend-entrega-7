@@ -12,13 +12,20 @@ socket.on('messageShow', data =>{
     ///agregar los divs por js de msg recivido
 })
 
+socket.on('productRefresh', data =>{
+    ///agregar los divs por js de msg recivido
+    console.log("refreshed")
+})
+
 function newMessage(){
     //agregar divs de mensaje enviado
     socket.emit('message', newMsg.value);
 }
 
-function addToCart(vehicles){
-    alert(vehicles)
+function itemToCart(id){
+    
+    socket.emit('addProduct', id);
+    
 
 }
 

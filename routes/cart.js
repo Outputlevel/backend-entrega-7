@@ -98,4 +98,44 @@ router.post('/:cartId/product/:productId', async (req, res) => {
     } 
 });
 
+//Delete product from cart
+router.delete('/:cartId/product/:productId', async (req, res) => {
+    try {
+        const cartId = req.params.cartId;
+        const productId = req.params.productId;
+        const addToCart = await cart.updateCart(cartId, productId) //agrega producto a carrito por su id
+        if(addToCart){
+            code = 201
+            response = new Response(code, "Cart updated", addToCart )
+            return res.status(code).send(response);
+        }
+        return res.status(404).send("Producto NO Creado");
+    } catch (err) {
+        console.error(err)
+        return []
+    } 
+});
+
+//update quantity 
+router.put('/:cartId/product/:productId', async (req, res) => {
+    try {
+        const cartId = req.params.cartId;
+        const productId = req.params.productId;
+        let quantity = req.body.quantity
+        const productQuantity = {
+            quantity: req.body.title
+         }
+        const addToCart = await cart.updateCart(cartId, productId, quantity) //agrega producto a carrito por su id
+        if(addToCart){
+            code = 201
+            response = new Response(code, "Cart updated", addToCart )
+            return res.status(code).send(response);
+        }
+        return res.status(404).send("Producto NO Creado");
+    } catch (err) {
+        console.error(err)
+        return []
+    } 
+});
+
 export default router
