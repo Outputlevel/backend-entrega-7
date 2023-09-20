@@ -19,6 +19,10 @@ router.get('/', async (req, res) => {
             return
         }
         const limit = req.query.limit;
+        const page = req.query.limit
+        const startIndex = (page - 1)*limit
+        const endIndex = page * limit
+        
         const vehicles = await data.getProducts()
         
         arrProps = {
