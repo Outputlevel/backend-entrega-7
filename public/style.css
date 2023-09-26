@@ -103,3 +103,9 @@
     flex-direction: column;
     gap: .725rem;
   }
+
+  .cart {
+    position: fixed;
+    bottom: 45px;
+    right: 45px;
+  }

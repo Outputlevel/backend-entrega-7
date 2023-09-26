@@ -11,10 +11,18 @@ const auth = function (req, res, next) {
 
 function logged(req, res, next) {
     if (req.session.user) {
-        return res.redirect("/profile");
+        return res.redirect("/views");
     }
 
     next();
 }
 
-export  {auth, logged};
+function admin(req, res, next){
+    const emailAdmin = req.user.email.splice(0,4) 
+    const passwordAdmin = req.user.password.splice(0,4)
+    if(emailAdmin && passwordAdmin === "admin"){
+        console.log("admin!")
+    }
+    next()
+}
+export  {auth, logged, admin};
